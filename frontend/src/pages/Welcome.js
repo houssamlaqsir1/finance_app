@@ -392,46 +392,6 @@ const Welcome = () => {
                   overflow: 'hidden'
                 }}
               >
-                {/* Mobile device mockup with app UI */}
-                <Box
-                  sx={{
-                    width: { xs: '80%', md: '90%' },
-                    maxWidth: '400px',
-                    height: 'auto',
-                    borderRadius: 4,
-                    overflow: 'hidden',
-                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
-                    position: 'relative',
-                    zIndex: 2,
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: '28px',
-                      borderTopLeftRadius: 4,
-                      borderTopRightRadius: 4,
-                      backgroundColor: '#222',
-                      zIndex: 3
-                    }
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src="/dashboard-mockup.png"
-                    alt="Finance App Dashboard"
-                    onError={(e) => {
-                      e.target.src = 'https://via.placeholder.com/400x800/3a86ff/FFFFFF?text=Finance+App+Dashboard';
-                    }}
-                    sx={{
-                      width: '100%',
-                      height: 'auto',
-                      display: 'block',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </Box>
                 
                 {/* Removing decorative elements that could cause flickering */}
               </Box>

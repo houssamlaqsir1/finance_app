@@ -275,8 +275,16 @@ const Register = () => {
             )}
             
             <Box component="form" onSubmit={handleSubmit} noValidate>
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item xs={12} sm={6}>
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  gap: 2, 
+                  mb: 2,
+                  width: '100%'
+                }}
+              >
+                <Box sx={{ flex: 1 }}>
                   <TextField
                     autoComplete="given-name"
                     name="firstName"
@@ -301,8 +309,8 @@ const Register = () => {
                       }
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
+                </Box>
+                <Box sx={{ flex: 1 }}>
                   <TextField
                     required
                     fullWidth
@@ -326,8 +334,8 @@ const Register = () => {
                       }
                     }}
                   />
-                </Grid>
-              </Grid>
+                </Box>
+              </Box>
               
               <TextField
                 margin="normal"
