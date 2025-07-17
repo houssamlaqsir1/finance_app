@@ -42,7 +42,9 @@ const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setError(null);
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', userData);
+      const res = await axios.post('http://localhost:5000/api/auth/register', userData, {
+        timeout: 3000 // 3 second timeout
+      });
       
       // Save token to localStorage and set auth header
       localStorage.setItem('token', res.data.token);
@@ -53,11 +55,17 @@ const AuthProvider = ({ children }) => {
       
       return res.data;
     } catch (err) {
-      setError(
-        err.response && err.response.data.message
-          ? err.response.data.message
-          : 'Registration failed. Please try again.'
-      );
+      if (err.code === 'ECONNABORTED') {
+        setError('Server connection timeout. Please check if the server is running.');
+      } else if (err.code === 'ERR_NETWORK') {
+        setError('Cannot connect to server. Please check if the server is running.');
+      } else {
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : 'Registration failed. Please try again.'
+        );
+      }
       throw err;
     }
   };
@@ -66,7 +74,9 @@ const AuthProvider = ({ children }) => {
   const login = async (userData) => {
     setError(null);
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', userData);
+      const res = await axios.post('http://localhost:5000/api/auth/login', userData, {
+        timeout: 3000 // 3 second timeout
+      });
       
       // Save token to localStorage and set auth header
       localStorage.setItem('token', res.data.token);
@@ -77,11 +87,17 @@ const AuthProvider = ({ children }) => {
       
       return res.data;
     } catch (err) {
-      setError(
-        err.response && err.response.data.message
-          ? err.response.data.message
-          : 'Login failed. Please check your credentials.'
-      );
+      if (err.code === 'ECONNABORTED') {
+        setError('Server connection timeout. Please check if the server is running.');
+      } else if (err.code === 'ERR_NETWORK') {
+        setError('Cannot connect to server. Please check if the server is running.');
+      } else {
+        setError(
+          err.response && err.response.data.message
+            ? err.response.data.message
+            : 'Login failed. Please check your credentials.'
+        );
+      }
       throw err;
     }
   };
