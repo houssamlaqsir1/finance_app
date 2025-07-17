@@ -42,49 +42,24 @@ const Welcome = () => {
         setScrolled(false);
       }
       
-      // Trigger animations based on scroll position
-      const newAnimatedItems = { ...animatedItems };
-      
-      if (scrollPosition > 100) {
-        newAnimatedItems.hero = true;
-      }
-      
-      if (scrollPosition > 300) {
-        newAnimatedItems.features = true;
-      }
-      
-      // Trigger card animations sequentially
-      if (scrollPosition > 600) {
-        setTimeout(() => {
-          const newCards = [...newAnimatedItems.cards];
-          newCards[0] = true;
-          setAnimatedItems(prev => ({ ...prev, cards: newCards }));
-        }, 0);
-        
-        setTimeout(() => {
-          const newCards = [...newAnimatedItems.cards];
-          newCards[1] = true;
-          setAnimatedItems(prev => ({ ...prev, cards: newCards }));
-        }, 200);
-        
-        setTimeout(() => {
-          const newCards = [...newAnimatedItems.cards];
-          newCards[2] = true;
-          setAnimatedItems(prev => ({ ...prev, cards: newCards }));
-        }, 400);
-      }
-      
-      setAnimatedItems(newAnimatedItems);
+      // Simplified animation handling to prevent flickering
+      setAnimatedItems({
+        hero: true,
+        features: scrollPosition > 300,
+        cards: scrollPosition > 600 ? [true, true, true] : [false, false, false]
+      });
     };
 
-    // Set initial animation states after component mounts
-    setTimeout(() => {
-      setAnimatedItems(prev => ({ ...prev, hero: true }));
-    }, 300);
+    // Set initial animation states
+    setAnimatedItems({
+      hero: true,
+      features: false,
+      cards: [false, false, false]
+    });
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [scrolled, animatedItems.cards]);
+  }, [scrolled]);
 
   // Function to smoothly scroll to features section
   const scrollToFeatures = () => {
@@ -97,46 +72,152 @@ const Welcome = () => {
   return (
     <Box sx={{ 
       minHeight: '100vh', 
-      background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`,
-      overflow: 'hidden'
+      background: 'linear-gradient(135deg, rgba(248, 248, 255, 0.9) 0%, rgba(240, 248, 255, 0.9) 100%)',
+      position: 'relative',
+      overflow: 'hidden',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.2) 0%, transparent 70%), radial-gradient(circle at 80% 70%, rgba(30, 144, 255, 0.2) 0%, transparent 70%)',
+        opacity: 0.8,
+        zIndex: 0,
+        pointerEvents: 'none'
+      }
     }}>
-      {/* Animated floating shapes background */}
+      {/* Animated background shapes */}
       <Box sx={{ 
-        position: 'absolute', 
+        position: 'fixed', 
         top: 0, 
         left: 0, 
         right: 0, 
         bottom: 0, 
         zIndex: 0,
         overflow: 'hidden',
-        pointerEvents: 'none'
+        pointerEvents: 'none',
+        display: 'block', 
+        opacity: 1
       }}>
+        {/* Main floating circles */}
         {[...Array(6)].map((_, i) => (
           <Box
             key={i}
             sx={{
               position: 'absolute',
-              width: Math.random() * 100 + 50,
-              height: Math.random() * 100 + 50,
+              width: (i % 2 === 0) ? 320 : 260,
+              height: (i % 2 === 0) ? 320 : 260,
               borderRadius: '50%',
-              background: `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, ${Math.random() * 255}, 0.1)`,
-              backdropFilter: 'blur(8px)',
-              animation: `float ${Math.random() * 10 + 15}s ease-in-out infinite`,
-              top: `${Math.random() * 80}%`,
-              left: `${Math.random() * 80}%`,
-              transform: `scale(${Math.random() * 1 + 0.5})`,
-              '@keyframes float': {
-                '0%': {
-                  transform: 'translate(0px, 0px) rotate(0deg) scale(1)',
-                },
-                '50%': {
-                  transform: 'translate(40px, -40px) rotate(180deg) scale(1.1)',
-                },
-                '100%': {
-                  transform: 'translate(0px, 0px) rotate(360deg) scale(1)',
-                },
+              background: i % 3 === 0 
+                ? 'radial-gradient(circle, rgba(100, 149, 237, 0.15) 0%, rgba(100, 149, 237, 0.05) 70%, transparent 100%)'
+                : i % 3 === 1
+                  ? 'radial-gradient(circle, rgba(147, 112, 219, 0.15) 0%, rgba(147, 112, 219, 0.05) 70%, transparent 100%)'
+                  : 'radial-gradient(circle, rgba(255, 105, 180, 0.15) 0%, rgba(255, 105, 180, 0.05) 70%, transparent 100%)',
+              backdropFilter: 'none',
+              animation: `float${i + 1} 30s ease-in-out infinite`,
+              top: `${(i * 20) % 100}%`,
+              left: `${(i * 25) % 100}%`,
+              opacity: 0.7,
+              zIndex: 0,
+              pointerEvents: 'none',
+              willChange: 'transform',
+              '@keyframes float1': {
+                '0%': { transform: 'translate(0px, 0px)' },
+                '33%': { transform: 'translate(100px, 50px)' },
+                '66%': { transform: 'translate(50px, 100px)' },
+                '100%': { transform: 'translate(0px, 0px)' }
               },
-              animationDelay: `${Math.random() * 5}s`
+              '@keyframes float2': {
+                '0%': { transform: 'translate(0px, 0px)' },
+                '33%': { transform: 'translate(-100px, -50px)' },
+                '66%': { transform: 'translate(-50px, -100px)' },
+                '100%': { transform: 'translate(0px, 0px)' }
+              },
+              '@keyframes float3': {
+                '0%': { transform: 'translate(0px, 0px)' },
+                '33%': { transform: 'translate(80px, -80px)' },
+                '66%': { transform: 'translate(-80px, 80px)' },
+                '100%': { transform: 'translate(0px, 0px)' }
+              },
+              '@keyframes float4': {
+                '0%': { transform: 'translate(0px, 0px)' },
+                '33%': { transform: 'translate(-80px, -80px)' },
+                '66%': { transform: 'translate(80px, 80px)' },
+                '100%': { transform: 'translate(0px, 0px)' }
+              },
+              '@keyframes float5': {
+                '0%': { transform: 'translate(0px, 0px) rotate(0deg)' },
+                '33%': { transform: 'translate(70px, -120px) rotate(10deg)' },
+                '66%': { transform: 'translate(-70px, -120px) rotate(-10deg)' },
+                '100%': { transform: 'translate(0px, 0px) rotate(0deg)' }
+              },
+              '@keyframes float6': {
+                '0%': { transform: 'translate(0px, 0px) rotate(0deg)' },
+                '33%': { transform: 'translate(-70px, 120px) rotate(-10deg)' },
+                '66%': { transform: 'translate(70px, 120px) rotate(10deg)' },
+                '100%': { transform: 'translate(0px, 0px) rotate(0deg)' }
+              }
+            }}
+          />
+        ))}
+        
+        {/* Additional accent elements */}
+        {[...Array(5)].map((_, i) => (
+          <Box
+            key={`accent-${i}`}
+            sx={{
+              position: 'absolute',
+              width: 160 - (i * 20),
+              height: 160 - (i * 20),
+              borderRadius: '50%',
+              background: i % 5 === 0 
+                ? 'radial-gradient(circle, rgba(255, 165, 0, 0.18) 0%, rgba(255, 165, 0, 0.06) 70%, transparent 100%)'
+                : i % 5 === 1
+                  ? 'radial-gradient(circle, rgba(75, 0, 130, 0.18) 0%, rgba(75, 0, 130, 0.06) 70%, transparent 100%)'
+                  : i % 5 === 2
+                    ? 'radial-gradient(circle, rgba(64, 224, 208, 0.18) 0%, rgba(64, 224, 208, 0.06) 70%, transparent 100%)'
+                    : i % 5 === 3
+                      ? 'radial-gradient(circle, rgba(255, 69, 0, 0.18) 0%, rgba(255, 69, 0, 0.06) 70%, transparent 100%)'
+                      : 'radial-gradient(circle, rgba(50, 205, 50, 0.18) 0%, rgba(50, 205, 50, 0.06) 70%, transparent 100%)',
+              animation: `accent${i + 1} 35s ease-in-out infinite`,
+              top: `${15 + ((i * 22) % 80)}%`,
+              right: `${5 + ((i * 18) % 80)}%`,
+              opacity: 0.7,
+              zIndex: 0,
+              pointerEvents: 'none',
+              willChange: 'transform',
+              '@keyframes accent1': {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(-60px, 40px) scale(1.1)' },
+                '66%': { transform: 'translate(60px, 40px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' }
+              },
+              '@keyframes accent2': {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(60px, -40px) scale(1.1)' },
+                '66%': { transform: 'translate(-60px, -40px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' }
+              },
+              '@keyframes accent3': {
+                '0%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
+                '33%': { transform: 'translate(-40px, -60px) scale(1.1) rotate(10deg)' },
+                '66%': { transform: 'translate(40px, -60px) scale(0.9) rotate(-10deg)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' }
+              },
+              '@keyframes accent4': {
+                '0%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' },
+                '33%': { transform: 'translate(40px, 60px) scale(1.1) rotate(-10deg)' },
+                '66%': { transform: 'translate(-40px, 60px) scale(0.9) rotate(10deg)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1) rotate(0deg)' }
+              },
+              '@keyframes accent5': {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(70px, 0px) scale(1.1)' },
+                '66%': { transform: 'translate(0px, 70px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' }
+              }
             }}
           />
         ))}
@@ -216,18 +297,19 @@ const Welcome = () => {
           flexDirection: 'column',
           justifyContent: 'center',
           position: 'relative',
-          pt: 8
+          pt: 8,
+          overflow: 'hidden',
+          zIndex: 2
         }}
       >
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
+        <Container maxWidth="lg" sx={{ overflow: 'hidden', position: 'relative', zIndex: 5 }}>
+          <Grid container spacing={4} alignItems="center" sx={{ overflow: 'hidden', position: 'relative', zIndex: 5 }}>
             <Grid item xs={12} md={6}>
               <Box 
                 sx={{
-                  transform: animatedItems.hero ? 'translateY(0)' : 'translateY(40px)',
-                  opacity: animatedItems.hero ? 1 : 0,
-                  transition: 'all 0.8s ease',
-                  textAlign: { xs: 'center', md: 'left' }
+                  textAlign: { xs: 'center', md: 'left' },
+                  position: 'relative',
+                  zIndex: 5
                 }}
               >
                 <Typography 
@@ -264,26 +346,19 @@ const Welcome = () => {
                     size="large"
                     component={RouterLink}
                     to="/register"
+                    disableRipple={false}
                     sx={{
                       px: 4,
                       py: 1.5,
                       fontSize: '1.1rem',
                       position: 'relative',
-                      overflow: 'hidden',
-                      '&::after': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        transform: 'translateX(-100%)',
-                        transition: 'transform 0.6s ease',
-                      },
-                      '&:hover::after': {
-                        transform: 'translateX(0)',
-                      },
+                      zIndex: 20,
+                      width: 'fit-content',
+                      border: 'none',
+                      backgroundColor: theme.palette.primary.main,
+                      '&:hover': {
+                        backgroundColor: theme.palette.primary.dark,
+                      }
                     }}
                   >
                     Get Started
@@ -307,17 +382,14 @@ const Welcome = () => {
               </Box>
             </Grid>
             
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} sx={{ overflow: 'hidden' }}>
               <Box 
                 sx={{ 
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  position: 'relative',
-                  transform: animatedItems.hero ? 'translateY(0) rotate(0deg)' : 'translateY(40px) rotate(3deg)',
-                  opacity: animatedItems.hero ? 1 : 0,
-                  transition: 'all 1s ease',
-                  transitionDelay: '0.2s',
+                  position: 'static',
+                  overflow: 'hidden'
                 }}
               >
                 {/* Mobile device mockup with app UI */}
@@ -329,7 +401,6 @@ const Welcome = () => {
                     borderRadius: 4,
                     overflow: 'hidden',
                     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
-                    transform: 'perspective(1000px) rotateY(-10deg) rotateX(5deg)',
                     position: 'relative',
                     zIndex: 2,
                     '&::before': {
@@ -362,39 +433,13 @@ const Welcome = () => {
                   />
                 </Box>
                 
-                {/* Decorative elements */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    width: '200px',
-                    height: '200px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, rgba(58, 134, 255, 0.2), rgba(255, 0, 110, 0.2))',
-                    filter: 'blur(30px)',
-                    top: '-20px',
-                    right: '10%',
-                    zIndex: 1
-                  }}
-                />
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    width: '150px',
-                    height: '150px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(255, 190, 11, 0.2))',
-                    filter: 'blur(30px)',
-                    bottom: '10%',
-                    left: '5%',
-                    zIndex: 1
-                  }}
-                />
+                {/* Removing decorative elements that could cause flickering */}
               </Box>
             </Grid>
           </Grid>
         </Container>
         
-        {/* Scroll indicator */}
+        {/* Subtle scroll indicator */}
         <Box 
           sx={{ 
             position: 'absolute', 
@@ -405,19 +450,8 @@ const Welcome = () => {
             flexDirection: 'column',
             alignItems: 'center',
             opacity: scrolled ? 0 : 0.8,
-            transition: 'opacity 0.3s ease',
-            animation: 'bounce 2s infinite',
-            '@keyframes bounce': {
-              '0%, 20%, 50%, 80%, 100%': {
-                transform: 'translateY(0) translateX(-50%)',
-              },
-              '40%': {
-                transform: 'translateY(-20px) translateX(-50%)',
-              },
-              '60%': {
-                transform: 'translateY(-10px) translateX(-50%)',
-              },
-            },
+            transition: 'opacity 0.5s ease',
+            zIndex: 5
           }}
         >
           <Typography variant="body2" sx={{ mb: 1, color: theme.palette.text.secondary }}>
@@ -426,8 +460,15 @@ const Welcome = () => {
           <IconButton 
             color="primary" 
             size="small" 
-            sx={{ animation: 'pulse 2s infinite', }}
             onClick={scrollToFeatures}
+            sx={{ 
+              animation: 'gentlePulse 2.5s ease-in-out infinite',
+              '@keyframes gentlePulse': {
+                '0%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(6px)' },
+                '100%': { transform: 'translateY(0)' },
+              }
+            }}
           >
             <KeyboardArrowDownIcon />
           </IconButton>
@@ -599,6 +640,8 @@ const Welcome = () => {
                   fontSize: '1.1rem',
                   backgroundColor: '#fff',
                   color: theme.palette.primary.main,
+                  position: 'relative',
+                  zIndex: 2,
                   '&:hover': {
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   }
