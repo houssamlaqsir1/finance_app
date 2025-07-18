@@ -16,6 +16,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './components/Dashboard';
 import Welcome from './pages/Welcome';
+import Accounts from './pages/Accounts';
+import Transactions from './pages/Transactions';
+import Investments from './pages/Investments';
+import Analytics from './pages/Analytics';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -263,6 +267,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/accounts" 
+              element={
+                <ProtectedRoute>
+                  <Accounts />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/transactions" 
+              element={
+                <ProtectedRoute>
+                  <Transactions />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/investments" 
+              element={
+                <ProtectedRoute>
+                  <Investments />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/analytics" 
+              element={
+                <ProtectedRoute>
+                  <Analytics />
                 </ProtectedRoute>
               } 
             />
