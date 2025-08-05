@@ -18,11 +18,14 @@ app.use(express.json());
 
 // Database connection
 const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'postgres.gdeovuhntjuzquhhucwq',
+  host: process.env.DB_HOST || 'aws-0-us-east-2.pooler.supabase.com',
   database: process.env.DB_NAME || 'finance_app',
   password: process.env.DB_PASSWORD || 'P@ssw0rd102030',
   port: process.env.DB_PORT || 5432,
+  ssl: {
+    rejectUnauthorized: false // Required for Supabase connections
+  }
 });
 
 // Test database connection
